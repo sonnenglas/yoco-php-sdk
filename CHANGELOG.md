@@ -4,6 +4,47 @@ All notable changes to `sonnenglas/yoco-php-sdk` are documented here. The format
 follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project
 adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+> Versions `0.1.0`–`0.3.0` were internal pre-release iterations and were never
+> published to Packagist. The first publicly available release is `1.0.0`.
+
+## [1.0.1] - 2026-05-22
+
+### Fixed
+- Documentation audit pass: stale `0.2.0` references replaced with `1.0.0`
+  in `docs/api/client.md`, `docs/api/README.md`, `docs/guides/installation.md`,
+  and `SECURITY.md`. Test count corrected in `README.md` (`98` → `114`).
+- Broken external links: `developer.yoco.com/online/` → `developer.yoco.com/docs/checkout-api/`;
+  removed defunct reference to `yoco/yoco-php-laravel`.
+- `docs/api/exceptions.md` — corrected note: `RateLimitException::$retryAfter`
+  **does** parse HTTP-date `Retry-After` (RFC 7231) as well as integer seconds.
+- `docs/api/checkouts.md` and `docs/api/dtos.md` — `RefundResponse` shape
+  updated to match the actual `{id, status, refundId?, message?}` Yoco
+  returns.
+- `examples/06-refund.php` — runtime fixed to print actual `RefundResponse`
+  fields instead of non-existent `$refund->amount` / `->currency`.
+- `docs/api/dtos.md` and `docs/api/README.md` — added missing entries for
+  `PaymentEventPayload`, `RefundEventPayload`, `PaymentMethodDetails`,
+  `CardDetails`, plus `WebhookEvent` typed-payload helpers and constants.
+- `docs/api/dtos.md` — `CheckoutResponse` now documents all echoed-back
+  fields (`metadata`, `successUrl`, `cancelUrl`, `failureUrl`, `lineItems`,
+  `subtotalAmount`, `totalDiscount`, `totalTaxAmount`, `externalId`).
+- `docs/guides/webhook-handling.md` — added `refund.succeeded` and
+  `refund.failed` event types, switched the example to use typed payload
+  helpers + `WebhookEvent::TYPE_*` constants.
+- `docs/guides/testing.md` — added a note for the "not a valid test card"
+  case (merchant-account configuration issue, not an SDK bug).
+- `docs/guides/installation.md` — added a "Pin a version" section pointing
+  at `^1.0`.
+- `examples/README.md` — documented `YOCO_WEBHOOK_URL`, `YOCO_WEBHOOK_NAME`
+  env vars + per-example arg requirements.
+- `SECURITY.md` — supported versions table refreshed (`1.0.x`).
+- `UPGRADING.md` — added `1.0.0` section, clarified that pre-1.0 was
+  internal-only.
+- `CONTRIBUTING.md` — visibility/finality guidance now matches the actual
+  source tree.
+- `composer.json` — added `authors`, `support` block, refined keywords and
+  description.
+
 ## [1.0.0] - 2026-05-22
 
 First stable release. The public API surface (`Client`, `Resources\Checkouts`,

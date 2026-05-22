@@ -58,10 +58,19 @@ public function create(
 | `status` | `string` | yes | Lifecycle state (`'created'`, etc.). |
 | `amount` | `int` | yes | Echo of the amount in cents. |
 | `currency` | `string` | yes | Echo of the currency (`'ZAR'`). |
-| `paymentId` | `?string` | only after payment | `p_…` payment id. Links to the broader Yoco payments resource. |
+| `paymentId` | `?string` | only after payment | `p_…` payment id. Links to the broader Yoco payments resource. Typically `null` on the create response; arrives via the `payment.succeeded` webhook. |
 | `processingMode` | `?string` | usually | `'live'` or `'test'` depending on which secret key created the checkout. |
 | `merchantId` | `?string` | usually | The Yoco merchant id. |
 | `clientReferenceId` | `?string` | optional | Echo of `externalId` from the request when present. |
+| `successUrl` | `?string` | echoed | The success URL Yoco recorded. |
+| `cancelUrl` | `?string` | echoed | The cancel URL Yoco recorded. |
+| `failureUrl` | `?string` | echoed | The failure URL Yoco recorded. |
+| `metadata` | `?array<string, mixed>` | echoed | The metadata you passed in. |
+| `lineItems` | `?list<array<string, mixed>>` | echoed | Raw line items echoed back by Yoco. |
+| `subtotalAmount` | `?int` | echoed | Subtotal in cents. |
+| `totalDiscount` | `?int` | echoed | Total discount in cents. |
+| `totalTaxAmount` | `?int` | echoed | Tax in cents. |
+| `externalId` | `?string` | echoed | Echo of `externalId` from the request. |
 
 **Returns:** `Dto\CheckoutResponse`
 
@@ -157,7 +166,10 @@ public function refund(
 | `$amount` | `?int` | no | Refund amount in **cents**. Pass `null` (the default) for a full refund of the original amount. Must be at least `1` when provided. |
 | `$idempotencyKey` | `?string` | no | Optional client-supplied `Idempotency-Key`. Auto-generated UUID v4 if `null`. Re-using the same key safely retries the same refund. |
 
-**Returns:** `Dto\RefundResponse` — `id` (`rf_…`), `status`, `amount`, `currency`, and optionally `checkoutId` and `paymentId`.
+**Returns:** `Dto\RefundResponse` — `id` (echoes the checkout id), `status`
+(`'pending'` or `'succeeded'`), and optionally `refundId` (`rfd_…`) and
+`message`. Amount and currency are **not** returned synchronously; they
+arrive on the `refund.succeeded` / `refund.failed` webhook event.
 
 **Throws:**
 
@@ -179,9 +191,9 @@ $refund = $client->checkouts()->refund(
     checkoutId: 'ch_9LVKD8GnAj7f39DFbn4F16bE',
 );
 
-echo $refund->id;       // rf_…
-echo $refund->status;   // 'created' | 'succeeded' | …
-echo $refund->amount;   // original checkout amount in cents
+echo $refund->id;        // echoes the checkout id
+echo $refund->refundId;  // rfd_… (may be null on early Yoco responses)
+echo $refund->status;    // 'pending' | 'succeeded'
 ```
 
 **Example — partial refund:**

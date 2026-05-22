@@ -1,7 +1,7 @@
 # API Reference
 
 Complete reference for every public symbol in `sonnenglas/yoco-php-sdk`
-(v0.2.0). Every signature, parameter type, exception, and constant on this
+(v1.0.0). Every signature, parameter type, exception, and constant on this
 page reflects what is actually in `src/`.
 
 ## Class index
@@ -12,7 +12,7 @@ page reflects what is actually in `src/`.
 | [`Sonnenglas\Yoco\Resources\Checkouts`](checkouts.md) | Create hosted checkouts and issue full or partial refunds. |
 | [`Sonnenglas\Yoco\Resources\Webhooks`](webhooks.md) | Create, list, and delete webhook subscriptions on your Yoco account. |
 | [`Sonnenglas\Yoco\Webhook\SignatureVerifier`](signature-verifier.md) | Verify an inbound webhook request against the Standard Webhooks v1 scheme, return a parsed `WebhookEvent`. |
-| [DTOs](dtos.md) | `CreateCheckoutRequest`, `LineItem`, `PricingDetails`, `CheckoutResponse`, `RefundResponse`, `WebhookSubscription`, `WebhookEvent`. |
+| [DTOs](dtos.md) | `CreateCheckoutRequest`, `LineItem`, `PricingDetails`, `CheckoutResponse`, `RefundResponse`, `WebhookSubscription`, `WebhookEvent`, `PaymentEventPayload`, `RefundEventPayload`, `PaymentMethodDetails`, `CardDetails`. |
 | [Exceptions](exceptions.md) | Full exception hierarchy rooted at `Sonnenglas\Yoco\Exceptions\YocoException`. |
 
 ## Architecture

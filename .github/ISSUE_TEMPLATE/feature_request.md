@@ -42,7 +42,7 @@ $client = new Client(secretKey: 'sk_test_...');
 Link to the Yoco developer documentation page describing the endpoint or
 capability this feature would wrap.
 
-- Yoco developer docs: https://developer.yoco.com/online/
+- Yoco developer docs: https://developer.yoco.com/docs/checkout-api/
 -->
 
 - Endpoint:

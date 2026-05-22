@@ -9,12 +9,16 @@ your own project as-is or use them as a fixture for ad-hoc debugging.
 - The SDK installed in your project: `composer require sonnenglas/yoco-php-sdk`.
 - A PSR-18 HTTP client; the easiest is Guzzle: `composer require guzzlehttp/guzzle`.
 - A Yoco **test secret key** (`sk_test_*`) exported as `YOCO_SECRET_KEY`.
-- For webhook-related examples: a webhook secret (`whsec_*`) exported as
-  `YOCO_WEBHOOK_SECRET`.
+- For verifying webhooks (`03-handle-webhook.php`): a webhook secret
+  (`whsec_*`) exported as `YOCO_WEBHOOK_SECRET`.
+- For registering a webhook (`04-register-webhook.php`): a destination URL
+  exported as `YOCO_WEBHOOK_URL` or passed as the first argument, and an
+  optional `YOCO_WEBHOOK_NAME` (defaults to a generated name).
+- For issuing a refund (`06-refund.php`): the checkout id of an already-paid
+  checkout, passed as the first argument.
 
-To grab keys, log in at [merchant.yoco.com](https://merchant.yoco.com/) and
-visit **Developers → API keys**. Use a test key here; never paste a live
-key into a shell history.
+Grab keys from your Yoco developer console. Use a test key here; never paste
+a live key into a shell history.
 
 ## Running an example
 

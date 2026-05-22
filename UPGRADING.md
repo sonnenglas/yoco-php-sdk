@@ -3,6 +3,23 @@
 This document captures breaking changes between releases and the steps required
 to migrate. See [`CHANGELOG.md`](CHANGELOG.md) for the full release history.
 
+> Versions `0.1.0`–`0.3.0` were internal pre-release iterations and were never
+> published to Packagist. The first publicly available release is `1.0.0`.
+
+## Upgrading to 1.0.0
+
+`1.0.0` is the first stable release and consolidates the `0.2.x` and `0.3.x`
+internal iterations without further API changes. If you have been using
+`^0.3.0` your code continues to work unchanged — just update the constraint:
+
+```bash
+composer require sonnenglas/yoco-php-sdk:^1.0
+```
+
+From `1.0.0` onward this package follows semantic versioning. Breaking changes
+will only land in a new major (`2.0.0`); minor versions add backwards-compatible
+features; patches fix bugs without changing the public API.
+
 ## Upgrading from 0.1.x to 0.2.x
 
 `0.2.0` rebuilds the HTTP error mapping around the actual behaviour of the

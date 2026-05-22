@@ -28,11 +28,13 @@
  *
  * Expected output:
  *   Refund created:
- *     id:          rfd_xxxxxxxxxxxxxxxxxxxxxxxx
- *     status:      created
- *     amount:      1500 ZAR cents
- *     checkoutId:  ch_xxxxxxxxxxxxxxxxxxxxxxxx
- *     paymentId:   pay_xxxxxxxxxxxxxxxxxxxxxxxx
+ *     id:        ch_xxxxxxxxxxxxxxxxxxxxxxxx     (echoes the checkout id)
+ *     refundId:  rfd_xxxxxxxxxxxxxxxxxxxxxxxx   (the new refund id)
+ *     status:    pending                         (eventual final state: succeeded | failed)
+ *     message:   (optional Yoco operator message, often null)
+ *
+ * Note: amount / currency are NOT in the refund response. Their final values
+ * arrive on the `refund.succeeded` / `refund.failed` webhook event.
  */
 
 declare(strict_types=1);
@@ -84,8 +86,10 @@ try {
 }
 
 echo "Refund created:\n";
-echo "  id:          {$refund->id}\n";
-echo "  status:      {$refund->status}\n";
-echo "  amount:      {$refund->amount} {$refund->currency} cents\n";
-echo "  checkoutId:  " . ($refund->checkoutId ?? '(not returned)') . "\n";
-echo "  paymentId:   " . ($refund->paymentId ?? '(not returned)') . "\n";
+echo "  id:        {$refund->id}\n";
+echo "  refundId:  " . ($refund->refundId ?? '(not returned)') . "\n";
+echo "  status:    {$refund->status}\n";
+echo "  message:   " . ($refund->message ?? '(none)') . "\n";
+echo "\nNote: amount and currency are not returned synchronously.\n";
+echo "Listen for the `refund.succeeded` / `refund.failed` webhook event\n";
+echo "to confirm the final outcome and read those fields.\n";

@@ -17,7 +17,7 @@ class Client
 {
     public const DEFAULT_BASE_URI = 'https://payments.yoco.com/api';
 
-    public const VERSION = '1.0.0';
+    public const VERSION = '1.0.1';
 
     private readonly HttpClient $http;
 

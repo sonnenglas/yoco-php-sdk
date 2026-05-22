@@ -46,6 +46,16 @@ This pulls in the SDK and the PSR contract packages (`psr/http-client`,
 `psr/http-factory`, `psr/http-message`), plus `php-http/discovery`, which
 auto-wires whichever concrete PSR-18 / PSR-17 implementation is installed.
 
+To pin to the current major (recommended for production):
+
+```bash
+composer require sonnenglas/yoco-php-sdk:^1.0
+```
+
+From `1.0.0` onward the package follows [semantic versioning](https://semver.org/)
+— breaking changes only land in a new major. See [`CHANGELOG.md`](../../CHANGELOG.md)
+and [`UPGRADING.md`](../../UPGRADING.md) for details.
+
 ### 2. Install a PSR-18 client (if you do not already have one)
 
 If your project does not yet depend on a PSR-18 client, install Guzzle:
@@ -97,7 +107,7 @@ php verify-yoco.php
 Expected output:
 
 ```
-SDK version:   0.2.0
+SDK version:   1.0.0
 API base URI:  https://payments.yoco.com/api
 Install OK.
 ```

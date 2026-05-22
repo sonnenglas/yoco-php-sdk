@@ -206,18 +206,27 @@ customer notifications, the lot.
 
 Inside the queue handler, branch on `$event->type`. Today Yoco emits:
 
-| Event type           | Meaning                              |
-|----------------------|--------------------------------------|
-| `payment.succeeded`  | The customer's card was charged.     |
-| `payment.failed`     | The charge attempt did not succeed.  |
+| Event type           | Meaning                                                      |
+|----------------------|--------------------------------------------------------------|
+| `payment.succeeded`  | The customer's card was charged.                             |
+| `payment.failed`     | The charge attempt did not succeed.                          |
+| `refund.succeeded`   | A refund completed; funds are on their way back to the card. |
+| `refund.failed`      | A refund was declined (see `payload.failureReason`).         |
 
 Match the event back to your local order via metadata you set when you
 created the checkout. **`metadata` is a Yoco-defined field nested inside
 `payload`**; everything inside it is your application's convention.
 
+`WebhookEvent` ships with [typed payload helpers](../api/dtos.md#webhookevent)
+that turn the raw array into a `PaymentEventPayload` / `RefundEventPayload`
+with `paymentMethodDetails.card.maskedCard` and `failureReason` already
+parsed for you. The raw array remains on `$event->payload` for forward
+compatibility.
+
 ```php
+use Sonnenglas\Yoco\Dto\WebhookEvent;
+
 $orderNumber = $event->payload['metadata']['orderNumber'] ?? null;
-$checkoutId  = $event->payload['metadata']['checkoutId']  ?? null;
 
 if ($orderNumber === null) {
     // Log and reject — your metadata contract is violated.
@@ -226,22 +235,23 @@ if ($orderNumber === null) {
 
 $order = Order::firstWhere('number', $orderNumber);
 
-switch ($event->type) {
-    case 'payment.succeeded':
-        $order->markPaid(
-            paymentId: $event->payload['id'] ?? null,
-            amount:    $event->payload['amount'] ?? null,
-        );
-        break;
-
-    case 'payment.failed':
-        $order->markPaymentFailed(reason: $event->payload['failureReason'] ?? null);
-        break;
-
-    default:
-        // Forward-compatibility: log unknown types but do not crash.
-        $logger->info('Unrecognised Yoco event type', ['type' => $event->type]);
-}
+match (true) {
+    $event->type === WebhookEvent::TYPE_PAYMENT_SUCCEEDED => $order->markPaid(
+        paymentId: $event->asPaymentPayload()->id,
+        amount:    $event->asPaymentPayload()->amount,
+    ),
+    $event->type === WebhookEvent::TYPE_PAYMENT_FAILED => $order->markPaymentFailed(
+        reason: $event->asPaymentPayload()->status,
+    ),
+    $event->type === WebhookEvent::TYPE_REFUND_SUCCEEDED => $order->markRefunded(
+        refundId: $event->asRefundPayload()->id,
+        amount:   $event->asRefundPayload()->amount,
+    ),
+    $event->type === WebhookEvent::TYPE_REFUND_FAILED => $alerts->raise(
+        $event->asRefundPayload()->failureReason ?? 'unknown',
+    ),
+    default => $logger->info('Unrecognised Yoco event type', ['type' => $event->type]),
+};
 ```
 
 **Why `metadata.orderNumber`, not `event.id` or `event.payload.id`?**

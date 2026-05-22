@@ -185,17 +185,27 @@ final readonly class CheckoutResponse
 | `status` | `string` | yes | Lifecycle status (`'created'`, etc.). |
 | `amount` | `int` | yes | Amount in cents. |
 | `currency` | `string` | yes | `'ZAR'`. |
-| `paymentId` | `?string` | after payment | `p_…` — joins to Yoco payments. |
+| `paymentId` | `?string` | after payment | `p_…` — joins to Yoco payments. Typically `null` on the create response; arrives via the `payment.succeeded` webhook. |
 | `processingMode` | `?string` | usually | `'live'` or `'test'`. |
 | `merchantId` | `?string` | usually | Merchant id. |
 | `clientReferenceId` | `?string` | optional | Echo of the request's `externalId`. |
+| `successUrl` | `?string` | echoed | Echo of the request URL. |
+| `cancelUrl` | `?string` | echoed | Echo of the request URL. |
+| `failureUrl` | `?string` | echoed | Echo of the request URL. |
+| `metadata` | `?array<string, mixed>` | echoed | Echo of request metadata. |
+| `lineItems` | `?list<array<string, mixed>>` | echoed | Raw line items echoed back. |
+| `subtotalAmount` | `?int` | echoed | Subtotal in cents. |
+| `totalDiscount` | `?int` | echoed | Discount total in cents. |
+| `totalTaxAmount` | `?int` | echoed | Tax total in cents. |
+| `externalId` | `?string` | echoed | Echo of the request `externalId`. |
 
 #### `fromArray(array $data): self`
 
 Validates that `id`, `redirectUrl`, `status`, and `currency` are strings,
-that `amount` is an `int`, and that any present optional field is a string.
-Throws `ApiException` (with the raw `$data` on `$responseBody`) on any
-mismatch.
+that `amount` is an `int`, and that any present optional field has the
+expected type (string for ids/urls, int for amounts, object for `metadata`,
+list-of-objects for `lineItems`). Throws `ApiException` (with the raw
+`$data` on `$responseBody`) on any mismatch.
 
 **Example — parsing a raw response:**
 
@@ -225,21 +235,24 @@ namespace Sonnenglas\Yoco\Dto;
 final readonly class RefundResponse
 ```
 
+The synchronous acknowledgement returned by `POST /api/checkouts/{id}/refund`.
+The final outcome (including the refunded amount and currency) is delivered
+asynchronously via the `refund.succeeded` / `refund.failed` webhook event —
+see [`RefundEventPayload`](#refundeventpayload).
+
 #### Properties
 
 | Property | Type | Always set? | Description |
 |----------|------|-------------|-------------|
-| `id` | `string` | yes | Refund id, e.g. `rf_…`. |
-| `status` | `string` | yes | Lifecycle status (`'created'`, `'succeeded'`, etc.). |
-| `amount` | `int` | yes | Refunded amount in cents. |
-| `currency` | `string` | yes | `'ZAR'`. |
-| `checkoutId` | `?string` | usually | Back-reference to the parent checkout. |
-| `paymentId` | `?string` | usually | Back-reference to the underlying payment. |
+| `id` | `string` | yes | Echoes the checkout id (`ch_…`). |
+| `status` | `string` | yes | `'pending'` or `'succeeded'`. |
+| `refundId` | `?string` | usually | The new refund id (`rfd_…`). |
+| `message` | `?string` | optional | Operator-readable note (often `null`). |
 
 #### `fromArray(array $data): self`
 
-Same validation pattern as `CheckoutResponse`. Throws `ApiException` on a
-malformed payload.
+Validates that `id` and `status` are strings, and that `refundId` / `message`
+are strings when present. Throws `ApiException` on a malformed payload.
 
 **Example:**
 
@@ -247,12 +260,10 @@ malformed payload.
 use Sonnenglas\Yoco\Dto\RefundResponse;
 
 $refund = RefundResponse::fromArray([
-    'id' => 'rf_abc',
-    'status' => 'succeeded',
-    'amount' => 2500,
-    'currency' => 'ZAR',
-    'checkoutId' => 'ch_123',
-    'paymentId' => 'p_xyz',
+    'id' => 'ch_abc',
+    'status' => 'pending',
+    'refundId' => 'rfd_xyz',
+    'message' => 'Refund processing',
 ]);
 ```
 
@@ -322,16 +333,45 @@ The return value of `SignatureVerifier::verify()`. Unlike the API response
 DTOs, `WebhookEvent` has **no** `fromArray()` — it is only ever produced by
 the verifier, which has already validated the field shapes.
 
+#### Constants
+
+| Constant | Value | Use |
+|----------|-------|-----|
+| `TYPE_PAYMENT_SUCCEEDED` | `'payment.succeeded'` | Successful payment. |
+| `TYPE_PAYMENT_FAILED` | `'payment.failed'` | Failed payment. |
+| `TYPE_REFUND_SUCCEEDED` | `'refund.succeeded'` | Successful refund. |
+| `TYPE_REFUND_FAILED` | `'refund.failed'` | Failed refund (with `failureReason`). |
+
 #### Properties
 
 | Property | Type | Description |
 |----------|------|-------------|
 | `id` | `string` | Unique event id. Use this for idempotent processing — Yoco may redeliver the same event. |
-| `type` | `string` | Event type, e.g. `'payment.succeeded'`, `'payment.failed'`. |
+| `type` | `string` | Event type, e.g. `'payment.succeeded'`, `'refund.failed'`. |
 | `createdDate` | `string` | ISO-8601 timestamp string assigned by Yoco. |
-| `payload` | `array<string, mixed>` | Raw event payload. **Not** wrapped in a typed object — Yoco's payload shape varies between event types. Refer to the [Yoco developer docs](https://developer.yoco.com/) for the schema per event type. |
+| `payload` | `array<string, mixed>` | Raw event payload — preserved for forward compatibility with new fields. Use the helpers below to get a typed view. |
 
-#### Example payload shapes
+#### `asPaymentPayload(): ?PaymentEventPayload`
+
+Returns a typed [`PaymentEventPayload`](#paymenteventpayload) when `$type`
+starts with `'payment.'`, or `null` otherwise.
+
+#### `asRefundPayload(): ?RefundEventPayload`
+
+Returns a typed [`RefundEventPayload`](#refundeventpayload) when `$type`
+starts with `'refund.'`, or `null` otherwise.
+
+```php
+match (true) {
+    ($paid = $event->asPaymentPayload()) !== null
+        => $orders->markPaid($paid->id, $paid->amount),
+    ($refund = $event->asRefundPayload()) !== null && $refund->status === 'failed'
+        => $alerts->raise($refund->failureReason ?? 'unknown'),
+    default => null,
+};
+```
+
+#### Example raw payload shapes
 
 `payment.succeeded` typically includes:
 
@@ -363,6 +403,119 @@ if ($processedEvents->has($event->id)) {
 $processedEvents->record($event->id);
 handle($event);
 ```
+
+---
+
+### `PaymentEventPayload`
+
+```php
+namespace Sonnenglas\Yoco\Dto;
+
+final readonly class PaymentEventPayload
+```
+
+Typed view of the `payload` field on `payment.succeeded` / `payment.failed`
+webhook events. Obtain via `WebhookEvent::asPaymentPayload()`.
+
+#### Properties
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `id` | `string` | Payment id (`p_…`). |
+| `amount` | `int` | Amount in cents. |
+| `currency` | `string` | Currency (`'ZAR'`). |
+| `status` | `string` | `'succeeded'` or `'failed'`. |
+| `mode` | `?string` | `'live'` or `'test'`. |
+| `merchantId` | `?string` | Merchant id. |
+| `metadata` | `array<string, mixed>` | Echo of the checkout metadata (often includes `orderNumber`, `checkoutId`). |
+| `paymentMethodDetails` | `?PaymentMethodDetails` | Card / payment method details. `null` when Yoco does not surface details. |
+
+#### `fromArray(array $payload): self`
+
+Validates required string/int fields and parses nested `paymentMethodDetails`.
+Throws `ApiException` on a malformed payload.
+
+---
+
+### `RefundEventPayload`
+
+```php
+namespace Sonnenglas\Yoco\Dto;
+
+final readonly class RefundEventPayload
+```
+
+Typed view of the `payload` field on `refund.succeeded` / `refund.failed`
+webhook events. Obtain via `WebhookEvent::asRefundPayload()`.
+
+#### Properties
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `id` | `string` | Refund id (`rfd_…`). |
+| `amount` | `int` | Refund amount in cents. |
+| `currency` | `string` | Currency (`'ZAR'`). |
+| `status` | `string` | `'succeeded'` or `'failed'`. |
+| `mode` | `?string` | `'live'` or `'test'`. |
+| `merchantId` | `?string` | Merchant id. |
+| `refundableAmount` | `?int` | Remaining refundable amount after this refund (cents). |
+| `metadata` | `array<string, mixed>` | Echo of the checkout metadata. |
+| `failureReason` | `?string` | Set on `refund.failed` events (e.g. `'card does not support refunds'`). |
+
+#### `fromArray(array $payload): self`
+
+Validates required string/int fields. Throws `ApiException` on a malformed
+payload.
+
+---
+
+### `PaymentMethodDetails`
+
+```php
+namespace Sonnenglas\Yoco\Dto;
+
+final readonly class PaymentMethodDetails
+```
+
+Wrapper around the payment instrument used for a `payment.*` event.
+
+#### Properties
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `type` | `string` | Payment-method type (e.g. `'card'`). |
+| `card` | `?CardDetails` | Card-specific details, present when `type === 'card'`. |
+
+#### `fromArray(array $data): self`
+
+Throws `ApiException` if `type` is missing or `card` is the wrong shape.
+
+---
+
+### `CardDetails`
+
+```php
+namespace Sonnenglas\Yoco\Dto;
+
+final readonly class CardDetails
+```
+
+Masked card information surfaced on webhook events. Safe to display on
+receipt screens — no PAN, no CVV.
+
+#### Properties
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `expiryMonth` | `int` | 1-12. |
+| `expiryYear` | `int` | Four-digit year. |
+| `maskedCard` | `string` | e.g. `'424242XXXXXX4242'`. |
+| `scheme` | `string` | `'visa'`, `'mastercard'`, `'amex'`, … |
+| `cardHolder` | `?string` | Optional name on card. |
+
+#### `fromArray(array $data): self`
+
+Throws `ApiException` if any required field is missing or the wrong type.
 
 ## See also
 

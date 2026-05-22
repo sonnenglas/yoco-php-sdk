@@ -1,10 +1,22 @@
 {
     "name": "sonnenglas/yoco-php-sdk",
-    "description": "Framework-agnostic PHP SDK for the Yoco Online (Checkout) API.",
+    "description": "Framework-agnostic PHP SDK for the Yoco Online (Checkout) Payment API with Standard Webhooks signature verification.",
     "type": "library",
     "license": "MIT",
-    "keywords": ["yoco", "payments", "south-africa", "sdk", "checkout"],
+    "keywords": ["yoco", "payments", "south-africa", "sdk", "checkout", "webhooks", "standard-webhooks", "psr-18"],
     "homepage": "https://github.com/sonnenglas/yoco-php-sdk",
+    "authors": [
+        {
+            "name": "SONNENGLAS",
+            "homepage": "https://www.sonnenglas.net/"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/sonnenglas/yoco-php-sdk/issues",
+        "source": "https://github.com/sonnenglas/yoco-php-sdk",
+        "docs": "https://github.com/sonnenglas/yoco-php-sdk/blob/master/docs/README.md",
+        "security": "https://github.com/sonnenglas/yoco-php-sdk/security/policy"
+    },
     "require": {
         "php": ">=8.2",
         "psr/http-client": "^1.0",

@@ -54,6 +54,15 @@ Any future expiry month/year and any 3-digit CVC are accepted. Full,
 current list including 3-D Secure flows and network-specific scenarios is
 at [developer.yoco.com/docs/checkout-api/testing](https://developer.yoco.com/docs/checkout-api/testing).
 
+> **Card declined as `"not a valid test card"`?** This is almost always a
+> merchant-account configuration issue on Yoco's side (test acquirer not
+> enabled, or the merchant signed up before test cards were turned on), not
+> an SDK bug. Verify with `webhooks()->list()` that your `sk_test_*` key has
+> API access, then ask Yoco support to enable test acquiring for your account.
+> Yoco's shared developer test keys (documented at
+> `developer.yoco.com/docs/checkout-api/testing`) always work and are a good
+> sanity check.
+
 ### Constraints of test mode
 
 - **Test transactions do not appear in the live dashboard.** Toggle the

@@ -8,12 +8,11 @@ promptly.
 
 | Version  | Supported          |
 |----------|--------------------|
-| `0.2.x`  | Yes                |
-| `0.1.x`  | No — please upgrade |
-| `< 0.1`  | No                 |
+| `1.0.x`  | Yes                |
+| `< 1.0`  | No — please upgrade |
 
-Until the SDK reaches `1.0.0`, only the latest minor release line receives
-security fixes. We strongly recommend pinning to `^0.2` and tracking releases.
+Only the latest minor release line on the current major receives security
+fixes. We recommend pinning to `^1.0` and tracking releases.
 
 ## Reporting a vulnerability
 
@@ -25,7 +24,7 @@ There are two private channels for reporting vulnerabilities:
 1. **GitHub Security Advisories** (preferred). Open a private advisory at
    <https://github.com/sonnenglas/yoco-php-sdk/security/advisories/new>. This
    gives us a private fork to coordinate the fix, draft a CVE, and credit you.
-2. **Email** to <security@sonnenglas.com>. Encrypt with PGP if you can; if you
+2. **Email** to <security@sonnenglas.net>. Encrypt with PGP if you can; if you
    need a key, request it in your initial email.
 
 When reporting, please include:

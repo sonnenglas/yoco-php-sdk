@@ -32,17 +32,16 @@ Payment API, with first-class support for Standard Webhooks signature verificati
   `WebhookSubscription::$mode` surface Yoco's `live` / `test` distinction so the
   same code path works in both environments.
 - **PHPStan level 9.** Zero static-analysis errors. Strict types throughout.
-- **98 tests.** PHPUnit 10 with realistic Yoco payload fixtures.
+- **114 tests.** PHPUnit 10 with realistic Yoco payload fixtures.
 
 ## Why this SDK?
 
-Yoco does not publish an official PHP SDK. The only existing third-party package,
-[`yoco/yoco-php-laravel`](https://github.com/yoco/yoco-php-laravel), has not been
-updated in five years, is Laravel-specific, and predates the current Checkout API
-entirely.
+Yoco does not publish an official PHP SDK at the time of writing, and the
+third-party packages we could find were either Laravel-specific, abandoned,
+or predated the current Checkout API.
 
 `sonnenglas/yoco-php-sdk` is built against the current public
-[Yoco Online Payments API](https://developer.yoco.com/online/), targets modern
+[Yoco Online Payments API](https://developer.yoco.com/docs/checkout-api/), targets modern
 PHP (8.2+), and stays out of your dependency injection container by design.
 
 ## Requirements
@@ -157,7 +156,7 @@ echo $refund->status;         // 'created' | 'succeeded' | ...
 | `Idempotency-Key` auto-generation (UUID v4)               |                                                         |
 | `Retry-After` parsing on rate-limit responses             |                                                         |
 
-The SDK targets the [Yoco Online Payments API](https://developer.yoco.com/online/)
+The SDK targets the [Yoco Online Payments API](https://developer.yoco.com/docs/checkout-api/)
 at `https://payments.yoco.com/api`. The broader `api.yoco.com/v1` surface (payments,
 payouts, locations) is intentionally not implemented — open an issue if you need it.
 

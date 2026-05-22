@@ -39,21 +39,20 @@ sits on the critical path for payment flows.
 - **PHPStan level 9** — `composer phpstan` must pass with zero errors. Use
   `@phpstan-ignore-line` only with an accompanying explanatory comment.
 - **All tests must pass** — `composer test`. New behaviour requires new tests.
-- **PHP-CS-Fixer** — run `composer cs-fix` before committing. The CI rejects
-  unformatted code.
+- **PHP-CS-Fixer** — run `composer cs-fix` before committing.
 - **`readonly` for DTOs.** Every DTO under `src/Dto/` is `final readonly` —
   follow the pattern.
-- **`final` for non-resource classes.** Anything not designed for extension
-  should be `final`. The exception is the abstract `YocoException` base class
-  and the `BaseResource` class used by `Resources\Checkouts` and
-  `Resources\Webhooks`.
+- **`final` where extension is not part of the contract.** DTOs, exceptions,
+  `HttpClient`, and `SignatureVerifier` are `final`. `Client`, `Resources\*`,
+  and `BaseResource` are intentionally **not** `final` so consumers can mock
+  them in tests; `YocoException` is `abstract`.
 - **`strict_types=1`** at the top of every file.
 - **Explicit return types** on every method and function (PHPStan level 9
   enforces this; PHP-CS-Fixer will fail the build if it slips through).
 - **Constructor property promotion** for all DTOs and most services.
-- **No `private`** for testability — the project convention is `protected` on
-  methods you might want to override in tests. (`private` is fine on internal
-  helpers that genuinely should not be extended.)
+- **`private` for helpers** that are clearly internal (e.g. JSON parsing
+  utilities inside `HttpClient`). Prefer `protected` only where you genuinely
+  want subclasses to override behaviour.
 
 ## Test-first workflow (TDD)
 
@@ -122,7 +121,7 @@ Include:
 
 - The use case driving the request
 - A sketch of the API you would like to call
-- A link to the relevant [Yoco API endpoint](https://developer.yoco.com/online/)
+- A link to the relevant [Yoco API endpoint](https://developer.yoco.com/docs/checkout-api/)
   if the feature wraps a Yoco capability
 
 Features that are outside the [supported scope](README.md#supported-features)

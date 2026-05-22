@@ -207,7 +207,7 @@ so the SDK maps it defensively.
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `$retryAfter` | `?int` | Number of seconds to wait before retrying, parsed from the `Retry-After` response header. `null` if the header is missing, empty, or not a positive integer. The SDK does **not** parse the HTTP-date form of `Retry-After`. |
+| `$retryAfter` | `?int` | Number of seconds to wait before retrying, parsed from the `Retry-After` response header. Accepts both integer-seconds and the RFC 7231 HTTP-date form (e.g. `Wed, 21 Oct 2026 07:28:00 GMT`). An HTTP-date in the past yields `0` (retry immediately). `null` only when the header is missing or unparseable. |
 
 ### Catching pattern
 

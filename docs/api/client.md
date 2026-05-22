@@ -17,7 +17,7 @@ lifetime of the process and stored as a singleton in a DI container.
 | Constant | Type | Value | Description |
 |----------|------|-------|-------------|
 | `Client::DEFAULT_BASE_URI` | `string` | `'https://payments.yoco.com/api'` | The production Yoco Online Checkout API base URI. Used when no `$baseUri` is supplied. |
-| `Client::VERSION` | `string` | `'0.2.0'` | Current SDK version. Embedded in the `User-Agent` header sent on every request. |
+| `Client::VERSION` | `string` | `'1.0.0'` | Current SDK version. Embedded in the `User-Agent` header sent on every request. |
 
 ## Constructor
 
