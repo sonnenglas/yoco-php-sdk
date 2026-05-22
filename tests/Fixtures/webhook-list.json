@@ -1,0 +1,16 @@
+{
+    "subscriptions": [
+        {
+            "id": "wh_4kFqUJtnzcEevTaWCB1uhsGm",
+            "name": "production",
+            "url": "https://example.com/hooks/yoco",
+            "mode": "live"
+        },
+        {
+            "id": "wh_ZTuPDtbgYwG48f6dEhFnZFCG",
+            "name": "staging",
+            "url": "https://staging.example.com/hooks/yoco",
+            "mode": "test"
+        }
+    ]
+}

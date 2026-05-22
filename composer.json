@@ -1,0 +1,53 @@
+{
+    "name": "sonnenglas/yoco-php-sdk",
+    "description": "Framework-agnostic PHP SDK for the Yoco Online (Checkout) API.",
+    "type": "library",
+    "license": "MIT",
+    "keywords": ["yoco", "payments", "south-africa", "sdk", "checkout"],
+    "homepage": "https://github.com/sonnenglas/yoco-php-sdk",
+    "require": {
+        "php": ">=8.2",
+        "psr/http-client": "^1.0",
+        "psr/http-factory": "^1.0",
+        "psr/http-message": "^1.0 || ^2.0",
+        "php-http/discovery": "^1.19"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10.5",
+        "phpstan/phpstan": "^1.11",
+        "guzzlehttp/guzzle": "^7.8",
+        "php-http/mock-client": "^1.6",
+        "friendsofphp/php-cs-fixer": "^3.50"
+    },
+    "suggest": {
+        "guzzlehttp/guzzle": "Recommended PSR-18 HTTP client for production use."
+    },
+    "autoload": {
+        "psr-4": {
+            "Sonnenglas\\Yoco\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Sonnenglas\\Yoco\\Tests\\": "tests/",
+            "Sonnenglas\\Yoco\\Tests\\Fixtures\\": "tests/Fixtures/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "phpstan": "phpstan analyse --memory-limit=512M",
+        "cs-fix": "php-cs-fixer fix",
+        "check": [
+            "@phpstan",
+            "@test"
+        ]
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

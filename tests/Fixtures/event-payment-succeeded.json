@@ -1,0 +1,26 @@
+{
+    "id": "evt_2vJWXjK6sCqp5o4Aebsw49eN",
+    "type": "payment.succeeded",
+    "createdDate": "2026-05-21T10:00:00Z",
+    "payload": {
+        "id": "p_LdcyhqMXcEsCsh4f72L8Vu76",
+        "amount": 10000,
+        "currency": "ZAR",
+        "status": "succeeded",
+        "mode": "live",
+        "merchantId": "mrch_abc123",
+        "metadata": {
+            "checkoutId": "ch_9LVKD8GnAj7f39DFbn4F16bE",
+            "orderNumber": "ORD-100"
+        },
+        "paymentMethodDetails": {
+            "type": "card",
+            "card": {
+                "expiryMonth": 12,
+                "expiryYear": 2028,
+                "maskedCard": "424242XXXXXX4242",
+                "scheme": "visa"
+            }
+        }
+    }
+}

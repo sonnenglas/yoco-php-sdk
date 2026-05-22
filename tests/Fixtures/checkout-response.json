@@ -1,0 +1,28 @@
+{
+    "id": "ch_9LVKD8GnAj7f39DFbn4F16bE",
+    "redirectUrl": "https://pay.yoco.com/ch_9LVKD8GnAj7f39DFbn4F16bE",
+    "status": "created",
+    "amount": 10000,
+    "currency": "ZAR",
+    "paymentId": "p_LdcyhqMXcEsCsh4f72L8Vu76",
+    "processingMode": "test",
+    "merchantId": "mrch_abc123",
+    "clientReferenceId": "order-99",
+    "successUrl": "https://example.com/success",
+    "cancelUrl": "https://example.com/cancel",
+    "failureUrl": "https://example.com/failure",
+    "metadata": {
+        "orderNumber": "ORD-100"
+    },
+    "lineItems": [
+        {
+            "displayName": "Widget",
+            "quantity": 2,
+            "pricingDetails": {"price": 5000}
+        }
+    ],
+    "subtotalAmount": 10000,
+    "totalDiscount": 0,
+    "totalTaxAmount": 1500,
+    "externalId": "ORD-100"
+}

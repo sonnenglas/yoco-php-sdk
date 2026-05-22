@@ -1,0 +1,17 @@
+{
+    "id": "evt_3vJWXjK6sCqp5o4Aebsw49fF",
+    "type": "payment.failed",
+    "createdDate": "2026-05-21T10:05:00Z",
+    "payload": {
+        "id": "p_aFailedPaymentXyz",
+        "amount": 10000,
+        "currency": "ZAR",
+        "status": "failed",
+        "mode": "live",
+        "merchantId": "mrch_abc123",
+        "metadata": {
+            "checkoutId": "ch_9LVKD8GnAj7f39DFbn4F16bE",
+            "orderNumber": "ORD-101"
+        }
+    }
+}
