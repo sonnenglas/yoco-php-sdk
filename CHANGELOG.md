@@ -7,6 +7,13 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 > Versions `0.1.0`–`0.3.0` were internal pre-release iterations and were never
 > published to Packagist. The first publicly available release is `1.0.0`.
 
+## [1.0.2] - 2026-06-23
+
+### Changed
+
+- Package author metadata and README credits now list Przemek Peron
+  (`przemek@sonnenglas.net`) instead of the generic SONNENGLAS label.
+
 ## [1.0.1] - 2026-05-22
 
 ### Fixed

@@ -225,7 +225,7 @@ Released under the [MIT License](LICENSE).
 
 ## Credits
 
-Built and maintained by [SONNENGLAS](https://www.sonnenglas.net/).
+Built and maintained by [Przemek Peron](mailto:przemek@sonnenglas.net).
 
 If this SDK saves you time, please consider starring the
 [GitHub repository](https://github.com/sonnenglas/yoco-php-sdk).

@@ -7,7 +7,8 @@
     "homepage": "https://github.com/sonnenglas/yoco-php-sdk",
     "authors": [
         {
-            "name": "SONNENGLAS",
+            "name": "Przemek Peron",
+            "email": "przemek@sonnenglas.net",
             "homepage": "https://www.sonnenglas.net/"
         }
     ],
